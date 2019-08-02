@@ -2,13 +2,35 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client;
+use Twilio\Rest\Verify\V2\Service\VerificationInstance;
 
 class VerifyController extends Controller
 {
+    /**
+     * @var Client
+     */
+    private $twilioClient;
+
+    /**
+     * VerifyController constructor.
+     * @param Client $twilioClient
+     */
+    public function __construct(Client $twilioClient)
+    {
+        $this->twilioClient = new $twilioClient(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function request(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -19,13 +41,62 @@ class VerifyController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(json_decode($validator), 400);
+            return response()->json($validator->errors(), 400);
         }
 
-        $http     = new Client;
-        $response = $http->get('https://lookups.twilio.com/v1/PhoneNumbers/' . $request->get('country_code') . $request->get('phone_number') . '?Type=carrier',
-            ['auth' => [env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN')]]);
+        $e164Number = create_e164($request->get('country_code'), $request->get('phone_number'));
 
-        return response()->json(json_decode($response->getBody()));
+        try {
+            $verification = $this->createVerify($e164Number, $request->get('locale'), $request->get('via'));
+            Log::info('success creating verify v2 call', $verification->toArray());
+            return response()->json([], 200);
+        } catch (TwilioException $ex) {
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function validateCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'country_code' => 'required',
+            'phone_number' => 'required',
+            'token'        => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $e164Number = create_e164($request->get('country_code'), $request->get('phone_number'));
+
+        try {
+            $checkVerification = $this->twilioClient->verify->v2->services(env('TWILIO_SERVICE_SID'))
+                ->verificationChecks
+                ->create($request->get('token'),
+                    ['to' => $e164Number]);
+            Log::info('Confirm phone success confirming code: ', $checkVerification->toArray());
+            return response()->json([], 200);
+        } catch (TwilioException $ex) {
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @param $e164PhoneNumber
+     * @param $locale
+     * @param $via
+     * @return VerificationInstance
+     * @throws TwilioException
+     */
+    private function createVerify($e164PhoneNumber, $locale, $via)
+    {
+        return $this->twilioClient->verify->v2
+            ->services(env('TWILIO_SERVICE_SID'))
+            ->verifications
+            ->create($e164PhoneNumber, $via, ['locale' => $locale]);
     }
 }

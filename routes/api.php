@@ -18,3 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/lookup', 'Api\LookupController@request');
+Route::post('/verification/start', 'Api\VerifyController@request');
+Route::post('/verification/verify', 'Api\VerifyController@validateCode');
