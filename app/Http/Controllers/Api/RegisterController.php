@@ -10,24 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Twilio\Rest\Client;
 
 class RegisterController extends Controller
 {
-    /**
-     * @var Client
-     */
-    private $twilioClient;
-
-    /**
-     * RegisterController constructor.
-     * @param Client $twilioClient
-     */
-    public function __construct(Client $twilioClient)
-    {
-        $this->twilioClient = $twilioClient;
-    }
-
     /**
      * @param Request  $request
      * @param AuthyApi $authyApi
