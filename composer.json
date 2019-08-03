@@ -1,5 +1,6 @@
 {
     "name": "authy-demo",
+    "version": "1.0.1",
     "type": "project",
     "description": "Simple demo showing how Authy works.",
     "keywords": [
