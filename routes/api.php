@@ -17,3 +17,4 @@ Route::post('/lookup', 'Api\LookupController@request');
 Route::post('/verification/start', 'Api\VerifyController@request');
 Route::post('/verification/verify', 'Api\VerifyController@validateCode');
 Route::post('/user/register', 'Api\RegisterController@request');
+Route::post('/login', 'Api\LoginController@request');
