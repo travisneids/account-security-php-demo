@@ -28,7 +28,7 @@ app.controller('RegistrationController', function ($scope, $http, $window) {
         $http.post('/api/lookup', $scope.setup)
             .success(function (data, status, headers, config) {
                 console.log("Success Lookup: ", data);
-                $scope.info = data.info.carrier;
+                $scope.info = data.carrier;
                 if ($scope.info.type === "mobile") {
                     $scope.disabledRegister = false;
                     alert("Lookup has determined you are registering a mobile phone number.");

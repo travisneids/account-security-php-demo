@@ -13,10 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/lookup', 'Api\LookupController@request');
 Route::post('/verification/start', 'Api\VerifyController@request');
 Route::post('/verification/verify', 'Api\VerifyController@validateCode');
+Route::post('/user/register', 'Api\RegisterController@request');
