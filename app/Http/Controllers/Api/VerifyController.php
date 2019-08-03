@@ -49,7 +49,7 @@ class VerifyController extends Controller
         try {
             $verification = $this->createVerify($e164Number, $request->get('locale'), $request->get('via'));
             Log::info('success creating verify v2 call', $verification->toArray());
-            return response()->json([], 200);
+            return response()->json($verification->toArray(), 200);
         } catch (TwilioException $ex) {
             return response()->json(['error' => $ex->getMessage()], 500);
         }
@@ -78,8 +78,14 @@ class VerifyController extends Controller
                 ->verificationChecks
                 ->create($request->get('token'),
                     ['to' => $e164Number]);
+
+            if(!$checkVerification->valid) {
+                Log::error('Verification code invalid.');
+                return response()->json(['error' => 'Verification code invalid.'], 500);
+            }
+
             Log::info('Confirm phone success confirming code: ', $checkVerification->toArray());
-            return response()->json([], 200);
+            return response()->json(['status' => 'success'], 200);
         } catch (TwilioException $ex) {
             return response()->json(['error' => $ex->getMessage()], 500);
         }
