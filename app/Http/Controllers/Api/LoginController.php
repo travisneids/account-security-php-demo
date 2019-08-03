@@ -29,6 +29,7 @@ class LoginController extends Controller
 
         try {
             $user = User::where('username', $request->get('username'))->firstOrFail();
+            $request->session()->put('user', $user);
 
             Log::info('User registered successfully', $user->toArray());
             return response()->json([], 200);

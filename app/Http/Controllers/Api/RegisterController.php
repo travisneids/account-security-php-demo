@@ -39,6 +39,8 @@ class RegisterController extends Controller
             $user->authy_id = $authyUser->id();
             $user->save();
 
+            $request->session()->put('user', $user);
+
             Log::info('User registered successfully', $user->toArray());
             return response()->json([], 200);
         } catch (Exception $ex) {
