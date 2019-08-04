@@ -22,7 +22,7 @@ git clone git@code.hq.twilio.com:tneiderhiser/signal-2019-php-authy-verify.git
 
 Install project dependencies
 ```
-cd account-security-php-demo
+cd signal-2019-php-authy-verify
 composer install
 ```
 
