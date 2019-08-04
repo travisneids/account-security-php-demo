@@ -14,7 +14,6 @@ class AuthyApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        $authyApiKey = env('TWILIO_AUTHY_API_KEY');
         $this->app->bind('Authy\AuthyApi', function() {
             return new AuthyApi(env('TWILIO_AUTHY_API_KEY'));
         });
