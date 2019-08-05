@@ -17,12 +17,12 @@ Minimum requirements to run a local instance of [Laravel](https://laravel.com/do
 ### Installation
 Clone this repo
 ```
-git clone git@code.hq.twilio.com:tneiderhiser/signal-2019-php-authy-verify.git
+git clone git@github.com:travisneids/account-security-php-demo.git
 ```
 
 Install project dependencies
 ```
-cd signal-2019-php-authy-verify
+cd account-security-php-demo
 composer install
 ```
 
