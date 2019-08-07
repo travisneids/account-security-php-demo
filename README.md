@@ -1,4 +1,4 @@
-# Node.js - Zero to Hero: Adding Account Security to your Stack
+# Laravel (PHP) - Zero to Hero: Adding Account Security to your Stack
 
 A Laravel (PHP) implementation demonstrating Twilio's Account Security APIs:
 
